@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>480</height>
+    <width>1400</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,6 +29,9 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
       <property name="styleSheet">
        <string notr="true">#frame {
 border-right: 1px solid lightgray;
@@ -36,19 +39,43 @@ padding: 5px;
 }</string>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Plain</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QLabel" name="icon">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>150</width>
            <height>150</height>
           </size>
+         </property>
+         <property name="sizeIncrement">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
           <string/>
@@ -62,13 +89,16 @@ padding: 5px;
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
+         <property name="margin">
+          <number>0</number>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="app_name">
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>250</width>
            <height>50</height>
           </size>
          </property>
@@ -96,16 +126,16 @@ padding: 5px;
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="first_city">
-         <property name="placeholderText">
-          <string>first city</string>
+        <widget class="QComboBox" name="first_city">
+         <property name="editable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="second_city">
-         <property name="placeholderText">
-          <string>second city</string>
+        <widget class="QComboBox" name="second_city">
+         <property name="editable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
