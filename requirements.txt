@@ -1,0 +1,5 @@
+pyqt5~=5.15.2
+overpy~=0.4
+geopy~=2.1.0
+yattag~=1.14.0
+PyQtWebEngine~=5.15.2

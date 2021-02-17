@@ -1,14 +1,11 @@
 import os
 
 from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QCompleter
-
 from yattag import Doc, indent
+from comparecities.osm import Overpass, NominatimSearch
 
-from osm import Overpass, NominatimSearch
 
-
-class Comparer():
+class Comparer:
 
     def __init__(self, gui):
         self.gui = gui
@@ -48,7 +45,7 @@ class Comparer():
         # Publish website
         print("Publishing website")
         self.gui.browser.page().profile().clearHttpCache()
-        site_url = QUrl("file:///" + os.path.join(os.getcwd(), "index.html"))
+        site_url = QUrl("file:///" + os.path.join(os.getcwd(), "resources", "index.html"))
         self.gui.browser.load(site_url)
 
     # Check city options using Nominatin and set Ids
@@ -84,7 +81,7 @@ class Comparer():
                 with tag('table', klass='all-pr'):
                     with tag('tr'):
                         for h in ["AMENITIES", parse_city_name(self.city1_id.raw.get("display_name")),
-                                  parse_city_name(self.city2_id.raw.get("display_name")), "DIFFERENCE*"]:
+                                  parse_city_name(self.city2_id.raw.get("display_name")), "Ratio*"]:
                             with tag('th'):
                                 text(h)
                     for key, value in sorted(self.counts.items(), key=lambda kv: (kv[1], kv[0]), reverse=True):
@@ -96,6 +93,7 @@ class Comparer():
                             with tag('td'):
                                 text(value[1])
                             diff = get_diff(value)
+                            ratio = get_ratio(value)
                             if diff > 0:
                                 diff_style = 'positive'
                             elif diff == 0:
@@ -103,14 +101,15 @@ class Comparer():
                             else:
                                 diff_style = 'negative'
                             with tag('td', klass=diff_style):
-                                text(format(diff, '+.01f') + " %")
+                                # text(format(diff, '+.01f') + " %")
+                                text(ratio)
 
                 with tag('div', klass='footer'):
                     text('* relative from the first city.')
                     with tag('a', href='https://www.openstreetmap.org/'):
                         text('Data from OpenStreetMaps')
 
-        f = open("index.html", "w+")
+        f = open(os.path.join(os.getcwd(), "resources", "index.html"), "w+")
         f.write(indent(doc.getvalue(), indent_text=True))
         f.close()
 
@@ -135,28 +134,40 @@ def count_amenities(all_nodes):
 
 # Merge two dictionaries by adding the values to a tupel
 def merge_dicts(dict1, dict2):
-    dict = {}
+    merged = {}
     for k in dict1:
         if k in dict2:
-            dict.update({k: [dict1[k], dict2[k]]})
+            merged.update({k: [dict1[k], dict2[k]]})
         else:
-            dict.update({k: [dict1[k], 0]})
+            merged.update({k: [dict1[k], 0]})
     for k in dict2:
-        if k not in dict:
-            dict.update({k: [0, dict2[k]]})
+        if k not in merged:
+            merged.update({k: [0, dict2[k]]})
 
-    return dict
+    return merged
 
 
 def get_diff(value):
-    if value[0] == 0:
+    if value[1] == 0:
         diff = -100
-    elif value[1] == 0:
+    elif value[0] == 0:
         diff = 100
     else:
-        diff = (float(value[0] - value[1]) / value[0]) * 100
-
+        diff = (float(value[1] - value[0]) / value[1]) * 100
     return diff
+
+
+def get_ratio(value):
+    left = value[0]
+    right = value[1]
+
+    min_val = max(min(left, right), 1)
+
+    left_ratio = round(left / min_val, 1)
+    left_ratio = 1 if left_ratio == 1 else left_ratio
+    right_ratio = round(right / min_val, 1)
+    right_ratio = 1 if right_ratio == 1 else right_ratio
+    return "%s : %s" % (left_ratio, right_ratio)
 
 
 # Parse the city name from geo request
